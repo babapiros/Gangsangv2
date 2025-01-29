@@ -1,60 +1,83 @@
 <style>
-.avatar {
-  border-radius: 5% !important;  
-  border: 2px solid white;
-  padding: 1px;
-}
-#avatar2 {
-    width: 5px;
-    height: 5px;
-    transition: all .3s ease-in-out;
-    cursor: pointer;
-    text-align:center;
-}
-    #avatar2:hover {g
-        transform: translate(0px,-20px);
-        -webkit-transform: translate(0px,-20px);
-	}
-  </style>	
-<style>
-		body {
-			background: url(https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/b3be1dae-3caa-4d45-be6c-3de586ba95e2/dejrji3-f0dfbf31-958c-4701-9e10-fcea6d2ff693.jpg/v1/fill/w_1192,h_670,q_70,strp/purple_midnight_by_bisbiswas_dejrji3-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTA4MCIsInBhdGgiOiJcL2ZcL2IzYmUxZGFlLTNjYWEtNGQ0NS1iZTZjLTNkZTU4NmJhOTVlMlwvZGVqcmppMy1mMGRmYmYzMS05NThjLTQ3MDEtOWUxMC1mY2VhNmQyZmY2OTMuanBnIiwid2lkdGgiOiI8PTE5MjAifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.f4LKY-NudHhtj8GSn-R9XSyK5fshhE3LEeGeVYDAjpc) no-repeat fixed;
-			background-size: 100%;
-		}
-	</style>
+    .game-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    .game-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 10px;
+        border: 2px solid white;
+    }
+    .execute-btn {
+        background: #7289da;
+        color: white !important;
+        padding: 0.5rem 1.5rem;
+        border-radius: 5px;
+        text-decoration: none !important;
+    }
+    .code-block {
+        background: #2b2b2b;
+        padding: 1rem;
+        border-radius: 5px;
+        position: relative;
+    }
+    .copy-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+</style>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
 <title>LevyScript | {{kod.isim}}</title>
 <main>
-  <br><br><br>
+  <div class="container">
+    <!-- Üst Bilgi -->
+    <div class="game-header">
+      <img src="{{kod.uploadedImage}}" class="game-icon" alt="Game Icon">
+      <div>
+        <h1 class="text-light">{{kod.game_name}}</h1>
+        <span class="badge badge-secondary">{{kod.kod_rank}}</span>
+      </div>
+    </div>
 
-<div id="sunucusresmi">
-   <hr><b><center><img alt="Avatar" src="{{kod.icon}}" class="avatar"> <h3 class="text-center text-light font-weight-bolder" style="margin: 1rem;">{{kod.k_adi}}</h3></center></b> <hr>
-</div>
-  <center>
-  <br>
-  <h3 class="text-center text-light font-weight-bolder" style="margin: 1rem;">Kod İsmi: {{kod.isim}} {{member.user.id}} </h3>
-    <h3 class="text-center text-light font-weight-bolder" style="margin: 1rem;">Kodu: {{kod.auth}} {{member.user.id}} </h3>
+    <!-- Yükleyen Bilgileri -->
+    <div class="d-flex align-items-center gap-2 mb-4">
+      <img src="{{user.avatar}}" class="rounded-circle" width="40" height="40">
+      <span class="text-light">{{user.username}}</span>
+      <span class="text-muted">•</span>
+      <span class="text-muted">{{kod.createdAt}}</span>
+    </div>
 
-  <h5 class="text-center text-light font-weight-light">Code Desc: {{kod.desc}}</h5>
-  <hr>
-  
-  <h7 class="text-center text-light font-weight-light">Modules: <kbd>{{kod.modules}}</kbd></h5>
-  <hr>
-  </center>
-  <center><p class="h5">Code(1)</p></center>
-  <pre class="kodyazirengi">
-    <code>{{kod.main_code}}</code>
-  </pre>
- // <button type="button" class="fa fa-copy"  id="copy_main">Copy Code</button>
+    <!-- Execute Butonu -->
+    <a href="{{kod.game_url}}" target="_blank" class="execute-btn mb-4 d-inline-block">Direct Execute</a>
 
-  <code id="code_main" hidden>{{kod.main_code}} </code>
-  <center><p class="h5">Code(2)</p></center>
-  <pre class="kodyazirengi">
-    <code>{{kod.komutlar_code}}</code>
-  </pre>
-<code id="code_komutlar" hidden>{{kod.komutlar_code}}</code>
-//  <button type="button" class="fa fa-copy"  id="copy_komutlar">Copy Code</button>
-<center><a href="/sil/{{kod.kod_rank}}/{{kod.id}}" class="btn btn-outline-danger btn-lg btn-block" style="margin: 1rem;">Delete Code</a></center>
+    <!-- Açıklama -->
+    <div class="bg-dark p-3 rounded mb-4">
+      <p class="text-light mb-0">{{kod.desc}}</p>
+    </div>
+
+    <!-- Kod Blokları -->
+    <div class="code-block mb-4">
+      <button class="btn btn-sm btn-outline-light copy-btn" data-clipboard-target="#code_main">
+        <i class="fas fa-copy"></i>
+      </button>
+      <pre class="text-light mb-0"><code id="code_main">{{kod.main_code}}</code></pre>
+    </div>
+
+    <!-- Resim Önizleme (Dosya Yükleme Sonucu) -->
+    {{#if kod.uploadedImage}}
+      <img src="{{kod.uploadedImage}}" class="img-fluid rounded mb-4" alt="Uploaded Image">
+    {{/if}}
+  </div>
 </main>
-<!-- KAR--> <script type="text/javascript" src="https://webkodu.ozgurlukicin.com/kod-kaynak/wk-kar-efekt.js"></script> <!-- KAR-->
+
+<!-- Clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
+<script>
+    new ClipboardJS('.copy-btn');
+</script>
