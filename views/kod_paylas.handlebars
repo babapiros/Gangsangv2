@@ -1,75 +1,129 @@
 <style>
-    .file-upload {
-        border: 2px dashed #6c757d;
+    .file-upload-container {
+        border: 2px dashed #7289da;
+        border-radius: 10px;
         padding: 2rem;
         text-align: center;
-        cursor: pointer;
         margin: 1rem 0;
+        transition: all 0.3s ease;
     }
-    .file-upload:hover {
-        background-color: #2b3035;
+    .file-upload-container:hover {
+        background: #2b2d31;
+        cursor: pointer;
     }
-    #preview {
-        max-width: 200px;
+    #previewImage {
+        max-width: 300px;
+        border-radius: 8px;
         margin: 1rem auto;
         display: none;
     }
+    .fa-file-upload {
+        font-size: 3rem;
+        color: #7289da;
+    }
 </style>
 
-<title>LevyScript | Share Code</title>
+<title>LevyScript | Kod Paylaş</title>
 <main>
-  <div class="container">
-    <h1 class="text-center">LevyScript Share Code</h1>
-    <p class="text-center">If something is shared with the intention of trolling or anything other than code, you will receive the "Blacklist" role on the server.</p>
-    <hr>
-    <div class="bg-dark p-4 rounded">
-      <form action="paylasim" method="POST" enctype="multipart/form-data">
-        <!-- Yeni Eklenen Oyun Bilgileri -->
-        <input type="text" class="form-control mb-3" name="game_name" placeholder="Game Name" required>
-        <input type="text" class="form-control mb-3" name="game_id" placeholder="Game ID" required>
-        <input type="url" class="form-control mb-3" name="game_url" placeholder="Game URL" required>
-
-        <!-- Mevcut Alanlar -->
-        <div class="input-group mb-3">
-          <input type="text" class="form-control" name="kod_adi" maxlength="2000" placeholder="Code Name" required>
-          <div class="input-group-append">
-            <select class="custom-select text-white bg-dark" name="kod_rank" required>
-              <option value="script">Roblox Script</option>
-              <option value="topluluk">Public</option>
-            </select>
-          </div>
-        </div>
-        <input type="text" class="form-control mb-3" name="desc" maxlength="300" placeholder="Code Desc" required>
-        <input type="text" class="form-control mb-3" name="modules" placeholder="Modules" required>
-        <input type="text" class="form-control mb-3" name="author" placeholder="Code Owner(s)" required>
-
-        <!-- Dosya Yükleme Alanı -->
-        <div class="file-upload" onclick="document.getElementById('fileInput').click()">
-          <i class="fas fa-file-upload fa-3x mb-2"></i>
-          <p>Upload Image/File</p>
-          <input type="file" id="fileInput" name="file" hidden accept="image/*" onchange="previewImage(event)">
-        </div>
-        <img id="preview" src="#" alt="Preview" class="img-fluid rounded">
-
-        <!-- Kod Blokları -->
-        <textarea class="form-control mb-3" name="main_code" rows="10" placeholder="Code (1)" required></textarea>
-        <textarea class="form-control mb-3" name="komutlar_code" rows="10" placeholder="Code (2)" required></textarea>
-
-        <input type="text" class="form-control" name="k_adi" value="{{user.username}}" hidden>
-        <button type="submit" class="btn btn-outline-primary btn-lg btn-block">Submit</button>
-      </form>
+  <div class="container mt-5">
+    <h1 class="text-center text-light mb-4">Kod Paylaş</h1>
+    <div class="alert alert-dark">
+      <p class="text-center mb-0">Trol amaçlı paylaşımlar sunucuda <strong>kara liste</strong> ile sonuçlanacaktır!</p>
     </div>
+    
+    <form action="/paylasim" method="POST" enctype="multipart/form-data" class="bg-dark p-4 rounded">
+      <!-- Oyun Bilgileri -->
+      <div class="row mb-4">
+        <div class="col-md-4">
+          <input type="text" class="form-control mb-3" name="game_name" placeholder="Oyun Adı" required>
+        </div>
+        <div class="col-md-4">
+          <input type="text" class="form-control mb-3" name="game_id" placeholder="Oyun ID" required>
+        </div>
+        <div class="col-md-4">
+          <input type="url" class="form-control mb-3" name="game_url" placeholder="Oyun URL" required>
+        </div>
+      </div>
+
+      <!-- Kod Bilgileri -->
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" name="kod_adi" placeholder="Kod Adı" required>
+        <select class="form-select bg-dark text-light" name="kod_rank" required>
+          <option value="script">Roblox Script</option>
+          <option value="topluluk">Topluluk</option>
+        </select>
+      </div>
+
+      <input type="text" class="form-control mb-3" name="desc" placeholder="Kod Açıklaması" required>
+      <input type="text" class="form-control mb-3" name="modules" placeholder="Kullanılan Modüller (virgülle ayırın)" required>
+      <input type="text" class="form-control mb-3" name="author" placeholder="Kod Sahipleri (virgülle ayırın)" required>
+
+      <!-- Dosya Yükleme Alanı -->
+      <div class="file-upload-container" onclick="document.getElementById('fileInput').click()">
+        <i class="fas fa-file-upload"></i>
+        <p class="text-light mt-2 mb-0">Resim/Dosya Yükle (Sürükle-Bırak)</p>
+        <input type="file" id="fileInput" name="file" hidden accept="image/*" onchange="previewFile(event)">
+      </div>
+      <img id="previewImage" src="#" alt="Önizleme" class="img-fluid">
+
+      <!-- Kod Editör Alanları -->
+      <div class="mb-4">
+        <label class="text-light mb-2">Ana Kod:</label>
+        <textarea class="form-control bg-secondary text-light" name="main_code" rows="10" placeholder="Kodunuzu buraya yazın..." spellcheck="false"></textarea>
+      </div>
+
+      <div class="mb-4">
+        <label class="text-light mb-2">Ek Kodlar:</label>
+        <textarea class="form-control bg-secondary text-light" name="komutlar_code" rows="10" placeholder="Ek kodlarınızı buraya yazın..." spellcheck="false"></textarea>
+      </div>
+
+      <input type="hidden" name="k_adi" value="{{user.username}}">
+      <button type="submit" class="btn btn-primary btn-lg w-100">
+        <i class="fas fa-paper-plane me-2"></i>Paylaş
+      </button>
+    </form>
   </div>
 </main>
 
 <script>
-    function previewImage(event) {
-        const reader = new FileReader();
-        reader.onload = function() {
-            const preview = document.getElementById('preview');
-            preview.src = reader.result;
-            preview.style.display = 'block';
-        }
-        reader.readAsDataURL(event.target.files[0]);
+function previewFile(event) {
+    const file = event.target.files[0];
+    const preview = document.getElementById('previewImage');
+    const reader = new FileReader();
+
+    reader.onloadend = function() {
+        preview.src = reader.result;
+        preview.style.display = 'block';
     }
-	</script>
+
+    if (file) {
+        reader.readAsDataURL(file);
+    } else {
+        preview.src = "#";
+        preview.style.display = 'none';
+    }
+}
+
+// Drag & Drop desteği
+const dropZone = document.querySelector('.file-upload-container');
+
+dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.style.background = '#36393f';
+});
+
+dropZone.addEventListener('dragleave', () => {
+    dropZone.style.background = 'transparent';
+});
+
+dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.style.background = 'transparent';
+    const file = e.dataTransfer.files[0];
+    document.getElementById('fileInput').files = e.dataTransfer.files;
+    previewFile({ target: document.getElementById('fileInput') });
+});
+</script>
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
