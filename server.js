@@ -13,7 +13,7 @@ const { Strategy } = require("passport-discord");
 const session = require("express-session");
 const client = new Discord.Client();
 const randomString = require("random-string");
-const multer = require('multer');
+const multer = require("multer");
 const db = (global.db = {});
   const ejs = require("ejs");
 //
@@ -26,16 +26,15 @@ for (let rank in ranks) {
   db[ranks[rank]] = new bookman(ranks[rank]);
 }
 
-
+// Multer ayarları (Dosya yükleme için)
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'public/uploads/');
-  },
+  destination: "./uploads/",
   filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname);
+    cb(null, file.fieldname + "-" + Date.now() + path.extname(file.originalname));
   }
 });
-const upload = multer({ storage });
+const upload = multer({ storage: storage });
+
 
 const IDler = {
   botID: "1118580463125147729",
@@ -67,11 +66,10 @@ app.use(bodyParser.json());
 app.use(
   bodyParser.urlencoded({
     limit: "50mb",
-    extended: true
+    extended: false
   })
 );
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public'))); // Dosya erişimi için
 app.engine(
   "handlebars",
   handlebars({
@@ -982,79 +980,79 @@ app.get("/paylas", (req, res) => {
     user: req.user
   });
 });
-app.post("/paylasim", upload.single('file'), async (req, res) => {
-  try {
-    const guild = client.guilds.cache.get(IDler.sunucuID);
-    if (!guild) throw new Error("Sunucu bulunamadı!");
+app.post("/paylasim", upload.single("uploadedImage"), (req, res) => {
+  let guild = client.guilds.cache.get(IDler.sunucuID);
+  let member = req.user ? guild.members.cache.get(req.user.id) : null;
+  let rank = "topluluk";
 
-    // Kullanıcı ve yetki kontrolleri
-    const member = req.user ? guild.members.cache.get(req.user.id) : null;
-    if (!member || IDler.kodPaylaşamayacakRoller.some(id => member.roles.cache.has(id))) {
-      return res.redirect(`/hata?statuscode=403&message=Yetkiniz yok!`);
-    }
-
-    // Yeni alanlar ve dosya yükleme
-    const uploadedImage = req.file ? `/uploads/${req.file.filename}` : null;
-
-    // Kod objesini oluştur
-    const kodObj = {
-      author: req.body.author.split(","),
-      isim: req.body.kod_adi,
-      id: randomString({ length: 20 }),
-      desc: req.body.desc,
-      modules: req.body.modules.split(","),
-      icon: req.user?.avatar 
-        ? `https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}.png` 
-        : `https://cdn.discordapp.com/icons/${IDler.sunucuID}/a_830c2bcfa4f1529946e82f15441a1227.jpg`,
-      main_code: req.body.main_code,
-      komutlar_code: req.body.komutlar_code,
-      kod_rank: (member.roles.cache.has(IDler.sahipRolü) || member.roles.cache.has(IDler.kodPaylaşımcıRolü)) 
-        ? req.body.kod_rank 
-        : "topluluk",
-      k_adi: req.user?.username || "Anonim",
-      date: new Date().toISOString(),
-      game_name: req.body.game_name,    // Yeni alan
-      game_id: req.body.game_id,        // Yeni alan
-      game_url: req.body.game_url,      // Yeni alan
-      uploadedImage: uploadedImage      // Yeni alan
-    };
-
-    // Veritabanına kaydet
-    db[kodObj.kod_rank].set(`kodlar.${kodObj.isim}`, kodObj);
-
-    // Discord'a bildirim gönder
-    const embed = new Discord.MessageEmbed()
-      .setColor("#7289DA")
-      .setAuthor("Yeni Kod Paylaşıldı!", client.user.displayAvatarURL())
-      .setDescription(`**Kod Adı:** ${kodObj.isim}\n**Oyun:** [${kodObj.game_name}](${kodObj.game_url})`)
-      .addField("Açıklama", kodObj.desc)
-      .addField("Yükleyen", `<@${req.user.id}>`)
-      .setFooter(guild.name, guild.iconURL({ dynamic: true }))
-      .setTimestamp();
-
-    client.channels.cache.get(IDler.kodLogKanalı).send(embed);
-
-    res.redirect(`/${kodObj.kod_rank}/${kodObj.id}`);
-
-  } catch (error) {
-    console.error("PAYLAŞIM HATASI:", error);
-    
-    // Hata durumunda yüklenen dosyayı sil
-    if (req.file) {
-      const fs = require('fs');
-      fs.unlinkSync(path.join(__dirname, 'public', req.file.path));
-    }
-
-    res.redirect(
+  // Yetkisiz kullanıcılar paylaşamaz
+  if (
+    member &&
+    IDler.kodPaylaşamayacakRoller.some(id => member.roles.cache.has(id))
+  )
+    return res.redirect(
       url.format({
         pathname: "/hata",
         query: {
-          statuscode: 500,
-          message: "Internal Server Error - Lütfen tekrar deneyin"
+          statuscode: 502,
+          message: "You do not have the necessary permission to share a code."
         }
       })
     );
-  }
+
+  // Yetkili roller özel rank seçebilir
+  if (
+    member &&
+    (member.roles.cache.has(IDler.sahipRolü) ||
+      member.roles.cache.has(IDler.kodPaylaşımcıRolü) ||
+      member.roles.cache.has(IDler.adminRolü))
+  )
+    rank = req.body.kod_rank;
+
+  let auth_arr = req.body.author.split(",");
+  let auht = auth_arr.map(auth => client.users.cache.get(auth)).filter(Boolean);
+  if (req.user) auht.push(req.user);
+
+  let obj = {
+    author: req.auth,
+    isim: req.body.kod_adi,
+    id: randomString({ length: 20 }),
+    desc: req.body.desc,
+    modules: req.body.modules.split(","),
+    icon: req.user
+      ? `https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}.png`
+      : `https://cdn.discordapp.com/icons/${IDler.sunucuID}/a_830c2bcfa4f1529946e82f15441a1227.jpg`,
+    main_code: req.body.main_code,
+    komutlar_code: req.body.komutlar_code,
+    kod_rank: rank,
+    k_adi: req.user.username,
+    date: new Date(Date.now()).toLocaleDateString(),
+    uploadedImage: req.file ? `/uploads/${req.file.filename}` : null // Dosya varsa yolu kaydet
+  };
+
+  if (req.user) db.api.add(`${req.user.id}.paylasilan`, 1);
+  db[obj.kod_rank].set(`kodlar.${obj.isim}`, obj);
+
+  client.channels.cache.get(IDler.kodLogKanalı).send(
+    new Discord.MessageEmbed()
+      .setColor("RANDOM")
+      .setFooter(
+        client.guilds.cache.get(IDler.sunucuID).name,
+        client.guilds.cache.get(IDler.sunucuID).iconURL({ dynamic: true, size: 2048 })
+      )
+      .setTimestamp()
+      .setAuthor("A Code has been shared on the site!", client.user.avatarURL())
+      .addField(
+        "Code Information",
+        `**Code Name:** ${obj.isim} \n**Code Description:** ${obj.desc} \n**Sharing:** <@${req.user.id}>`
+      )
+      .addField(
+        "Code Page",
+        `[Click to Go to Code Page!](https://levyscript.onrender.com/${obj.kod_rank}/${obj.id})`
+      )
+  );
+
+  res.redirect(`/${obj.kod_rank}/${obj.id}`);
 });
 
 
