@@ -1,85 +1,88 @@
 <style>
-	body {
-		background: url(https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/b3be1dae-3caa-4d45-be6c-3de586ba95e2/dejrji3-f0dfbf31-958c-4701-9e10-fcea6d2ff693.jpg/v1/fill/w_1192,h_670,q_70,strp/purple_midnight_by_bisbiswas_dejrji3-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTA4MCIsInBhdGgiOiJcL2ZcL2IzYmUxZGFlLTNjYWEtNGQ0NS1iZTZjLTNkZTU4NmJhOTVlMlwvZGVqcmppMy1mMGRmYmYzMS05NThjLTQ3MDEtOWUxMC1mY2VhNmQyZmY2OTMuanBnIiwid2lkdGgiOiI8PTE5MjAifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.f4LKY-NudHhtj8GSn-R9XSyK5fshhE3LEeGeVYDAjpc) no-repeat fixed;
-		background-size: 100%;
-	}
-	.upload-container {
-		text-align: center;
-		margin-bottom: 20px;
-	}
-	.upload-box {
-		border: 2px dashed #ccc;
-		border-radius: 10px;
-		padding: 20px;
-		cursor: pointer;
-		display: inline-block;
-		position: relative;
-		width: 100%;
-		max-width: 400px;
-	}
-	.upload-box input {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		opacity: 0;
-		cursor: pointer;
-	}
-	.upload-box .fa {
-		font-size: 40px;
-		color: #ccc;
-	}
-	.upload-preview {
-		margin-top: 15px;
-		display: none;
-		width: 100%;
-		max-width: 200px;
-		border-radius: 10px;
-	}
+  body {
+    background: url(https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/b3be1dae-3caa-4d45-be6c-3de586ba95e2/dejrji3-f0dfbf31-958c-4701-9e10-fcea6d2ff693.jpg/v1/fill/w_1192,h_670,q_70,strp/purple_midnight_by_bisbiswas_dejrji3-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTA4MCIsInBhdGgiOiJcL2ZcL2IzYmUxZGFlLTNjYWEtNGQ0NS1iZTZjLTNkZTU4NmJhOTVlMlwvZGVqcmppMy1mMGRmYmYzMS05NThjLTQ3MDEtOWUxMC1mY2VhNmQyZmY2OTMuanBnIiwid2lkdGgiOiI8PTE5MjAifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.f4LKY-NudHhtj8GSn-R9XSyK5fshhE3LEeGeVYDAjpc) no-repeat fixed;
+    background-size: 100%;
+  }
+
+  .form-container {
+    background: rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    color: white;
+  }
+
+  .form-title {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+
+  .file-upload {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed white;
+    border-radius: 10px;
+    padding: 10px;
+    cursor: pointer;
+    margin-bottom: 10px;
+  }
+
+  .file-upload input[type="file"] {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .file-upload i {
+    font-size: 2rem;
+    color: white;
+  }
+
+  .preview {
+    max-width: 100%;
+    margin-top: 10px;
+    border-radius: 10px;
+  }
 </style>
 
 <title>LevyScript | Share Code</title>
 <main>
-  <div class="container">
-    <h1 class="text-center">LevyScript Share Code</h1>
+  <div class="container form-container">
+    <h1 class="form-title">LevyScript Share Code</h1>
     <p class="text-center">
       If something is shared with the intention of trolling or anything other than code, you will receive the "Blacklist" role on the server.
     </p>
     <hr>
-    <div class="bg-dark">
-      <form action="/paylasim" method="POST" enctype="multipart/form-data">
-        
-        <!-- Dosya Yükleme Alanı -->
-        <div class="upload-container">
-          <label class="upload-box">
-            <i class="fa fa-upload"></i>
-            <input type="file" name="uploadedImage" accept="image/*" onchange="previewImage(event)">
-          </label>
-          <br>
-          <img id="imagePreview" class="upload-preview" alt="Uploaded Image">
-        </div>
-
-        <input type="text" class="form-control" name="kod_adi" maxlength="2000" placeholder="Code Name" required><br>
-        
-        <div class="input-group">
-          <div class="input-group-append">
-            <select class="custom-select text-white bg-dark" name="kod_rank" id="rank_choice" required>
-              <option value="script">Roblox Script</option>
-              <option value="topluluk">Public</option>
-            </select>
-          </div>
-        </div><br>
-
-        <input type="text" class="form-control" name="desc" maxlength="300"  placeholder="Code Desc" required><br>
-        <input type="text" class="form-control" name="modules" placeholder="Modules" required><br>
-        <input type="text" class="form-control" name="author" placeholder="Code Owner(s)" required><br>
-
-        <p class="h3">Code...</p>
-        <textarea class="form-control" name="main_code" id="main_code" rows="20" placeholder="Code" required></textarea><br>
-
-        <input type="text" class="form-control" name="k_adi" value="{{user.username}}" required READONLY hidden><br>
-        <button type="submit" class="btn btn-outline-primary btn-lg">Submit</button>
-      </form>
-    </div>
+    <form action="paylasim" method="POST" enctype="multipart/form-data">
+      <div class="form-group">
+        <input type="text" class="form-control" name="kod_adi" maxlength="2000" placeholder="Code Name" required>
+      </div>
+      <div class="form-group">
+        <textarea class="form-control" name="desc" maxlength="300" placeholder="Code Description" required></textarea>
+      </div>
+      <div class="form-group">
+        <input type="text" class="form-control" name="modules" placeholder="Modules (e.g., links or files)" required>
+      </div>
+      <div class="form-group">
+        <input type="text" class="form-control" name="author" placeholder="Code Owner(s)" required>
+      </div>
+      <div class="form-group file-upload">
+        <input type="file" name="uploadedImage" accept="image/*">
+        <i class="fas fa-upload"></i> Click to Upload Image
+      </div>
+      <div class="form-group">
+        <textarea class="form-control" name="main_code" rows="10" placeholder="Main Code" required></textarea>
+      </div>
+      <div class="form-group">
+        <textarea class="form-control" name="komutlar_code" rows="10" placeholder="Command Code (if any)"></textarea>
+      </div>
+      <input type="text" class="form-control" name="k_adi" value="{{user.username}}" required hidden>
+      <button type="submit" class="btn btn-outline-primary btn-lg">Submit</button>
+    </form>
   </div>
 </main>
 
