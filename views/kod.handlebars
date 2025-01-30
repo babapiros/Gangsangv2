@@ -6,10 +6,15 @@
         margin-bottom: 2rem;
     }
     .game-icon {
-        width: 80px;
-        height: 80px;
+        width: 150px;
+        height: 150px;
         border-radius: 10px;
         border: 2px solid white;
+    }
+    .info-section {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
     }
     .execute-btn {
         background: #7289da;
@@ -33,46 +38,46 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
-<title>LevyScript | {{kod.isim}}</title>
+<title>{{kod.isim}}</title>
 <main>
   <div class="container">
     <!-- Üst Bilgi -->
     <div class="game-header">
+      <!-- Sol Üstteki Fotoğraf -->
       <img src="{{kod.uploadedImage}}" class="game-icon" alt="Game Icon">
-      <div>
-        <h1 class="text-light">{{kod.game_name}}</h1>
-        <span class="badge badge-secondary">{{kod.kod_rank}}</span>
+      
+      <!-- Sağdaki Bilgiler -->
+      <div class="info-section">
+        <h1 class="text-light">{{kod.isim}}</h1>
+        <div class="d-flex align-items-center gap-2">
+          <img src="{{kod.icon}}" class="rounded-circle" width="40" height="40">
+          <span class="text-light">{{k_adi}}</span>
+          <span class="text-muted">•</span>
+          <span class="text-muted">{{kod.date}}</span>
+        </div>
       </div>
     </div>
 
-    <!-- Yükleyen Bilgileri -->
-    <div class="d-flex align-items-center gap-2 mb-4">
-      <img src="{{kod.icon}}" class="rounded-circle" width="40" height="40">
-      <span class="text-light">{{user.username}}</span>
-      <span class="text-muted">•</span>
-      <span class="text-muted">{{kod.createdAt}}</span>
-    </div>
-
-    <!-- Execute Butonu -->
+    <!-- Direct Execute Butonu -->
     <a href="{{kod.modules}}" target="_blank" class="execute-btn mb-4 d-inline-block">Direct Execute</a>
 
     <!-- Açıklama -->
+    <h3 class="text-light">Description</h3>
     <div class="bg-dark p-3 rounded mb-4">
       <p class="text-light mb-0">{{kod.desc}}</p>
     </div>
 
     <!-- Kod Blokları -->
+    <h3 class="text-light">Code</h3>
     <div class="code-block mb-4">
       <button class="btn btn-sm btn-outline-light copy-btn" data-clipboard-target="#code_main">
-        <i class="fas fa-copy"></i>
+        <i class="fas fa-copy"></i> Copy
       </button>
       <pre class="text-light mb-0"><code id="code_main">{{kod.main_code}}</code></pre>
     </div>
 
-    <!-- Resim Önizleme (Dosya Yükleme Sonucu) -->
-    {{#if kod.uploadedImage}}
-      <img src="{{kod.uploadedImage}}" class="img-fluid rounded mb-4" alt="Uploaded Image">
-    {{/if}}
+    <!-- RAW Kod Butonu -->
+    <a href="/raw/{{kod.id}}" target="_blank" class="btn btn-outline-light">View Raw</a>
   </div>
 </main>
 
