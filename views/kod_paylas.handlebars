@@ -1,129 +1,96 @@
 <style>
-    .file-upload-container {
-        border: 2px dashed #7289da;
-        border-radius: 10px;
-        padding: 2rem;
-        text-align: center;
-        margin: 1rem 0;
-        transition: all 0.3s ease;
-    }
-    .file-upload-container:hover {
-        background: #2b2d31;
-        cursor: pointer;
-    }
-    #previewImage {
-        max-width: 300px;
-        border-radius: 8px;
-        margin: 1rem auto;
-        display: none;
-    }
-    .fa-file-upload {
-        font-size: 3rem;
-        color: #7289da;
-    }
+	body {
+		background: url(https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/b3be1dae-3caa-4d45-be6c-3de586ba95e2/dejrji3-f0dfbf31-958c-4701-9e10-fcea6d2ff693.jpg/v1/fill/w_1192,h_670,q_70,strp/purple_midnight_by_bisbiswas_dejrji3-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTA4MCIsInBhdGgiOiJcL2ZcL2IzYmUxZGFlLTNjYWEtNGQ0NS1iZTZjLTNkZTU4NmJhOTVlMlwvZGVqcmppMy1mMGRmYmYzMS05NThjLTQ3MDEtOWUxMC1mY2VhNmQyZmY2OTMuanBnIiwid2lkdGgiOiI8PTE5MjAifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.f4LKY-NudHhtj8GSn-R9XSyK5fshhE3LEeGeVYDAjpc) no-repeat fixed;
+		background-size: 100%;
+	}
+	.upload-container {
+		text-align: center;
+		margin-bottom: 20px;
+	}
+	.upload-box {
+		border: 2px dashed #ccc;
+		border-radius: 10px;
+		padding: 20px;
+		cursor: pointer;
+		display: inline-block;
+		position: relative;
+		width: 100%;
+		max-width: 400px;
+	}
+	.upload-box input {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		opacity: 0;
+		cursor: pointer;
+	}
+	.upload-box .fa {
+		font-size: 40px;
+		color: #ccc;
+	}
+	.upload-preview {
+		margin-top: 15px;
+		display: none;
+		width: 100%;
+		max-width: 200px;
+		border-radius: 10px;
+	}
 </style>
 
-<title>LevyScript | Kod Paylaş</title>
+<title>LevyScript | Share Code</title>
 <main>
-  <div class="container mt-5">
-    <h1 class="text-center text-light mb-4">Kod Paylaş</h1>
-    <div class="alert alert-dark">
-      <p class="text-center mb-0">Trol amaçlı paylaşımlar sunucuda <strong>kara liste</strong> ile sonuçlanacaktır!</p>
+  <div class="container">
+    <h1 class="text-center">LevyScript Share Code</h1>
+    <p class="text-center">
+      If something is shared with the intention of trolling or anything other than code, you will receive the "Blacklist" role on the server.
+    </p>
+    <hr>
+    <div class="bg-dark">
+      <form action="/paylasim" method="POST" enctype="multipart/form-data">
+        
+        <!-- Dosya Yükleme Alanı -->
+        <div class="upload-container">
+          <label class="upload-box">
+            <i class="fa fa-upload"></i>
+            <input type="file" name="uploadedImage" accept="image/*" onchange="previewImage(event)">
+          </label>
+          <br>
+          <img id="imagePreview" class="upload-preview" alt="Uploaded Image">
+        </div>
+
+        <input type="text" class="form-control" name="kod_adi" maxlength="2000" placeholder="Code Name" required><br>
+        
+        <div class="input-group">
+          <div class="input-group-append">
+            <select class="custom-select text-white bg-dark" name="kod_rank" id="rank_choice" required>
+              <option value="script">Roblox Script</option>
+              <option value="topluluk">Public</option>
+            </select>
+          </div>
+        </div><br>
+
+        <input type="text" class="form-control" name="desc" maxlength="300"  placeholder="Code Desc" required><br>
+        <input type="text" class="form-control" name="modules" placeholder="Modules" required><br>
+        <input type="text" class="form-control" name="author" placeholder="Code Owner(s)" required><br>
+
+        <p class="h3">Code...</p>
+        <textarea class="form-control" name="main_code" id="main_code" rows="20" placeholder="Code" required></textarea><br>
+
+        <input type="text" class="form-control" name="k_adi" value="{{user.username}}" required READONLY hidden><br>
+        <button type="submit" class="btn btn-outline-primary btn-lg">Submit</button>
+      </form>
     </div>
-    
-    <form action="/paylasim" method="POST" enctype="multipart/form-data" class="bg-dark p-4 rounded">
-      <!-- Oyun Bilgileri -->
-      <div class="row mb-4">
-        <div class="col-md-4">
-          <input type="text" class="form-control mb-3" name="game_name" placeholder="Oyun Adı" required>
-        </div>
-        <div class="col-md-4">
-          <input type="text" class="form-control mb-3" name="game_id" placeholder="Oyun ID" required>
-        </div>
-        <div class="col-md-4">
-          <input type="url" class="form-control mb-3" name="game_url" placeholder="Oyun URL" required>
-        </div>
-      </div>
-
-      <!-- Kod Bilgileri -->
-      <div class="input-group mb-3">
-        <input type="text" class="form-control" name="kod_adi" placeholder="Kod Adı" required>
-        <select class="form-select bg-dark text-light" name="kod_rank" required>
-          <option value="script">Roblox Script</option>
-          <option value="topluluk">Topluluk</option>
-        </select>
-      </div>
-
-      <input type="text" class="form-control mb-3" name="desc" placeholder="Kod Açıklaması" required>
-      <input type="text" class="form-control mb-3" name="modules" placeholder="Kullanılan Modüller (virgülle ayırın)" required>
-      <input type="text" class="form-control mb-3" name="author" placeholder="Kod Sahipleri (virgülle ayırın)" required>
-
-      <!-- Dosya Yükleme Alanı -->
-      <div class="file-upload-container" onclick="document.getElementById('fileInput').click()">
-        <i class="fas fa-file-upload"></i>
-        <p class="text-light mt-2 mb-0">Resim/Dosya Yükle (Sürükle-Bırak)</p>
-        <input type="file" id="fileInput" name="file" hidden accept="image/*" onchange="previewFile(event)">
-      </div>
-      <img id="previewImage" src="#" alt="Önizleme" class="img-fluid">
-
-      <!-- Kod Editör Alanları -->
-      <div class="mb-4">
-        <label class="text-light mb-2">Ana Kod:</label>
-        <textarea class="form-control bg-secondary text-light" name="main_code" rows="10" placeholder="Kodunuzu buraya yazın..." spellcheck="false"></textarea>
-      </div>
-
-      <div class="mb-4">
-        <label class="text-light mb-2">Ek Kodlar:</label>
-        <textarea class="form-control bg-secondary text-light" name="komutlar_code" rows="10" placeholder="Ek kodlarınızı buraya yazın..." spellcheck="false"></textarea>
-      </div>
-
-      <input type="hidden" name="k_adi" value="{{user.username}}">
-      <button type="submit" class="btn btn-primary btn-lg w-100">
-        <i class="fas fa-paper-plane me-2"></i>Paylaş
-      </button>
-    </form>
   </div>
 </main>
 
 <script>
-function previewFile(event) {
-    const file = event.target.files[0];
-    const preview = document.getElementById('previewImage');
-    const reader = new FileReader();
-
-    reader.onloadend = function() {
-        preview.src = reader.result;
-        preview.style.display = 'block';
+  function previewImage(event) {
+    var reader = new FileReader();
+    reader.onload = function() {
+      var output = document.getElementById('imagePreview');
+      output.src = reader.result;
+      output.style.display = 'block';
     }
-
-    if (file) {
-        reader.readAsDataURL(file);
-    } else {
-        preview.src = "#";
-        preview.style.display = 'none';
-    }
-}
-
-// Drag & Drop desteği
-const dropZone = document.querySelector('.file-upload-container');
-
-dropZone.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    dropZone.style.background = '#36393f';
-});
-
-dropZone.addEventListener('dragleave', () => {
-    dropZone.style.background = 'transparent';
-});
-
-dropZone.addEventListener('drop', (e) => {
-    e.preventDefault();
-    dropZone.style.background = 'transparent';
-    const file = e.dataTransfer.files[0];
-    document.getElementById('fileInput').files = e.dataTransfer.files;
-    previewFile({ target: document.getElementById('fileInput') });
-});
+    reader.readAsDataURL(event.target.files[0]);
+  }
 </script>
-
-<!-- Font Awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
