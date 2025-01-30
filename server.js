@@ -40,7 +40,7 @@ const IDler = {
   botID: "1118580463125147729",
   botToken: process.env.TOKEN,
   botSecret: process.env.SECRET,
-  botCallbackURL: "https://levyscript.onrender.com/callback",
+  botCallbackURL: "https://levyscripts.onrender.com/callback",
   sunucuID: "1235189205571866655",
   sunucuDavet: "https://discord.gg/F8vNGp3UV9",
   kodLogKanalı: "1329053123255472128",
